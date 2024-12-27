@@ -1,6 +1,7 @@
 use macroquad::{prelude::*, time};
 
 const SAND_SIZE : f32 = 10.0;
+const PHYSICS_TICK_MILLIS : f32 = 0.02;
 
 #[macroquad::main("Main")]
 async fn main() {    
@@ -14,6 +15,7 @@ async fn main() {
         Color::from_hex(0xdab984), 
     ];
 
+    let mut acc_time = 0.0;
 
 
     loop {
@@ -55,7 +57,8 @@ async fn main() {
                     match blocks.get(X) {
                         Some(s) => {
                             match s.get(Y) {
-                                Some(q) => if *q == 0 {blocks[X][Y] = rand::gen_range(1, 6)},
+                                // Some(q) => if *q == 0 {blocks[X][Y] = rand::gen_range(1, 6)},
+                                Some(q) => if *q == 0 {blocks[X][Y] = 1},
                                 None => (),
                             }
                         }
@@ -68,18 +71,21 @@ async fn main() {
 
 
 
-        // game of life
-        for x in 0..b_width {
-            for y in (0..b_height).rev() {
-                let x = x as usize;
-                let y = y as usize;
-                if blocks[x][y] != 0 && y != (b_height as usize)-1 && blocks[x][y+1] == 0 {
-                    blocks[x][y+1] = blocks[x][y];
-                    blocks[x][y] = 0;
+        if acc_time > PHYSICS_TICK_MILLIS {
+            // game of life
+            for x in 0..b_width {
+                for y in (0..b_height).rev() {
+                    let x = x as usize;
+                    let y = y as usize;
+                    if blocks[x][y] != 0 && y != (b_height as usize)-1 && blocks[x][y+1] == 0 {
+                        blocks[x][y+1] = blocks[x][y];
+                        blocks[x][y] = 0;
+                    }
                 }
             }
-        }
 
+            acc_time = 0.0;
+        }
         
 
         for x in 0..b_width {
@@ -90,6 +96,7 @@ async fn main() {
             }
         }
 
+        acc_time += time::get_frame_time();
         next_frame().await
     }
 }
