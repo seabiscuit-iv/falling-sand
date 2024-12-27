@@ -39,7 +39,7 @@ async fn main() {
 
         //clear
         if is_key_down(KeyCode::C) {
-            
+            blocks = (0..b_width).map(|x| (0..b_height).map(|y| { 0 }).collect()).collect();
         }
 
         // draw additional pixels
