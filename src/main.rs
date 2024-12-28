@@ -8,8 +8,8 @@ async fn main() {
     let mut blocks : Vec<Vec<u32>> = Vec::new();
 
     let sand_colors = vec![
-        Color::from_hex(0xffe0ab),
-        Color::from_hex(0xf3ce93), 
+        // Color::from_hex(0xffe0ab),
+        // Color::from_hex(0xf3ce93), 
         Color::from_hex(0xedc9af), 
         Color::from_hex(0xffe0ab), 
         Color::from_hex(0xdab984), 
