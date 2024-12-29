@@ -6,6 +6,4 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4.13"
 rand = "0.8.5"
-
-[target.wasm32-unknown-unknown]
-rustflags = ['--cfg', 'getrandom_backend="wasm_js"']
+getrandom = { version = "0.2", features = ["js"] }

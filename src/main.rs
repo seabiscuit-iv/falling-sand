@@ -15,10 +15,15 @@ async fn main() {
         Color::from_hex(0xd6b588), 
         Color::from_hex(0xffe0ab), 
         Color::from_hex(0xdab984), 
+        Color::from_hex(0x5b270b)
     ];
 
     let mut acc_time = 0.0;
 
+    // 0 == SAND
+    // 1 == WOOD
+    // 2 == ClEAR
+    let mut mode = 0;
 
     loop {
         let width = screen_width();
@@ -44,6 +49,19 @@ async fn main() {
         //clear
         if is_key_down(KeyCode::C) {
             blocks = (0..b_width).map(|x| (0..b_height).map(|y| { 0 }).collect()).collect();
+            mode = 0;
+        }
+
+        if is_key_down(KeyCode::W) {
+            mode = 1;
+        }
+
+        if is_key_down(KeyCode::S) {
+            mode = 0;
+        }
+
+        if is_key_down(KeyCode::E) {
+            mode = 2;
         }
 
 
@@ -62,7 +80,17 @@ async fn main() {
                         match blocks.get(X) {   
                             Some(s) => {
                                 match s.get(Y) {
-                                    Some(q) => if *q == 0 && rand::gen_range(0, 2) != 1 {blocks[X][Y] = rand::gen_range(1, 6)},
+                                    Some(q) => {
+                                        if mode == 0 {
+                                            if *q == 0 && rand::gen_range(0, 2) != 1 {
+                                                blocks[X][Y] = rand::gen_range(1, 6)
+                                            }
+                                        } else if mode == 1 {
+                                            blocks[X][Y] = 6;
+                                        } else if mode == 2 {
+                                            blocks[X][Y] = 0;
+                                        }
+                                    },
                                     // Some(q) => if *q == 0 {blocks[X][Y] = 1},
                                     None => (),
                                 }
@@ -85,7 +113,7 @@ async fn main() {
                 for x in row_iter.iter(){
                     let x = *x as usize;
                     let y = y as usize;
-                    if blocks[x][y] != 0 && y != (b_height as usize)-1 {
+                    if blocks[x][y] != 0 && blocks[x][y] != 6 && y != (b_height as usize)-1 {
                         let left = x != 0 && blocks[x-1][y+1] == 0;
                         let right = x != (b_width as usize) - 1 && blocks[x+1][y+1] == 0;
 
@@ -94,7 +122,7 @@ async fn main() {
                             blocks[x][y] = 0;
                         } else if left && right{
                             let offset: i32 = if rand::gen_range(0, 2) == 1 {1} else {-1};
-                            blocks[x][((y as i32) + offset) as usize] = blocks[x][y];
+                            blocks[(x as i32 + offset) as usize][y+1] = blocks[x][y];
                             blocks[x][y] = 0;
                         } else if left {
                             blocks[x-1][y+1] = blocks[x][y];
