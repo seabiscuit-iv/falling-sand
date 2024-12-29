@@ -14,8 +14,11 @@ async fn main() {
         Color::from_hex(0xf3ce93), 
         Color::from_hex(0xd6b588), 
         Color::from_hex(0xffe0ab), 
-        Color::from_hex(0xdab984), 
-        Color::from_hex(0x5b270b)
+        Color::from_hex(0xdab984),
+        //wood colors
+        Color::from_hex(0x3e2723),
+        Color::from_hex(0x5d4037),
+        Color::from_hex(0x795548),  
     ];
 
     let mut acc_time = 0.0;
@@ -92,7 +95,7 @@ async fn main() {
                                                 blocks[X][Y] = rand::gen_range(1, 6)
                                             }
                                         } else if mode == 1 && *q == 0 {
-                                            blocks[X][Y] = 6;
+                                            blocks[X][Y] = rand::gen_range(6, 9);
                                         } else if mode == 2 {
                                             blocks[X][Y] = 0;
                                         }
@@ -119,7 +122,7 @@ async fn main() {
                 for x in row_iter.iter(){
                     let x = *x as usize;
                     let y = y as usize;
-                    if blocks[x][y] != 0 && blocks[x][y] != 6 && y != (b_height as usize)-1 {
+                    if blocks[x][y] != 0 && blocks[x][y] < 6 && y != (b_height as usize)-1 {
                         let left = x != 0 && blocks[x-1][y+1] == 0;
                         let right = x != (b_width as usize) - 1 && blocks[x+1][y+1] == 0;
 
@@ -165,10 +168,13 @@ async fn main() {
                         Some(s) => {
                             match s.get(Y) {
                                 Some(q) => {
-                                    // if *q == 0 {
-                                    println!("Drawing");
+                                    if mode == 0 {
+                                        draw_rectangle(X as f32 * SAND_SIZE, Y as f32 * SAND_SIZE, SAND_SIZE, SAND_SIZE, if i.abs() == 2 || j.abs() == 2 {Color::from_hex(0xffe0ab)} else {Color::from_hex(0xf3ce93)});
+                                    } else if mode == 1 {
+                                        draw_rectangle(X as f32 * SAND_SIZE, Y as f32 * SAND_SIZE, SAND_SIZE, SAND_SIZE, if i.abs() == 2 || j.abs() == 2 {Color::from_hex(0x654321)} else {Color::from_hex(0x543210)});
+                                    } else if mode == 2 {
                                         draw_rectangle(X as f32 * SAND_SIZE, Y as f32 * SAND_SIZE, SAND_SIZE, SAND_SIZE, if i.abs() == 2 || j.abs() == 2 {Color::from_hex(0x444444)} else {Color::from_hex(0x222222)});
-                                    // }
+                                    }
                                 },
                                 // Some(q) => if *q == 0 {blocks[X][Y] = 1},
                                 None => (),
