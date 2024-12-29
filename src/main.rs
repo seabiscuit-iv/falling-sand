@@ -45,6 +45,12 @@ async fn main() {
 
         let (x, y) = mouse_position();
 
+        
+        draw_text("S: Sand", 10.0, 25.0, 25.0, WHITE);
+        draw_text("W: Wood", 10.0, 50.0, 25.0, WHITE);
+        draw_text("E: Eraser", 10.0, 75.0, 25.0, WHITE);
+        draw_text("C: Clear", 10.0, 100.0, 25.0, WHITE);
+
 
         //clear
         if is_key_down(KeyCode::C) {
@@ -72,8 +78,8 @@ async fn main() {
                 // draw_rectangle(mouse_position().0, mouse_position().1, 10.0, 10.0, WHITE);
                 let (x, y) = ((x / SAND_SIZE).floor() as usize, (y / SAND_SIZE).floor() as usize);
 
-                for i in -2..2 {
-                    for j in -2..2 {
+                for i in -2..=2 {
+                    for j in -2..=2 {
                         let X = ((x as i32) + i) as usize;
                         let Y = ((y as i32) + j) as usize;
 
@@ -85,7 +91,7 @@ async fn main() {
                                             if *q == 0 && rand::gen_range(0, 2) != 1 {
                                                 blocks[X][Y] = rand::gen_range(1, 6)
                                             }
-                                        } else if mode == 1 {
+                                        } else if mode == 1 && *q == 0 {
                                             blocks[X][Y] = 6;
                                         } else if mode == 2 {
                                             blocks[X][Y] = 0;
@@ -138,7 +144,6 @@ async fn main() {
             acc_time = 0.0;
         }
         
-
         for x in 0..b_width {
             for y in 0..b_height {
                 if blocks[x as usize][y as usize] != 0 {
@@ -146,6 +151,38 @@ async fn main() {
                 }
             }
         }
+
+
+        if !is_mouse_button_down(MouseButton::Left) || mode == 2 {
+            let (x, y) = ((x / SAND_SIZE).floor() as usize, (y / SAND_SIZE).floor() as usize);
+
+            for i in -2..=2 {
+                for j in -2..=2 {
+                    let X = ((x as i32) + i) as usize;
+                    let Y = ((y as i32) + j) as usize;
+
+                    match blocks.get(X) {   
+                        Some(s) => {
+                            match s.get(Y) {
+                                Some(q) => {
+                                    // if *q == 0 {
+                                    println!("Drawing");
+                                        draw_rectangle(X as f32 * SAND_SIZE, Y as f32 * SAND_SIZE, SAND_SIZE, SAND_SIZE, if i.abs() == 2 || j.abs() == 2 {Color::from_hex(0x444444)} else {Color::from_hex(0x222222)});
+                                    // }
+                                },
+                                // Some(q) => if *q == 0 {blocks[X][Y] = 1},
+                                None => (),
+                            }
+                        }
+                        None => ()
+                    }
+                    // blocks[x][y] = rand::gen_range(1, 6); 
+                }
+            }
+        }
+
+
+
 
         acc_time += time::get_frame_time();
         next_frame().await
